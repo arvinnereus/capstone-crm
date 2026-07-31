@@ -1,0 +1,62 @@
+/**
+ * DEV-ONLY config for the Content Creation feature build. Fully isolated
+ * from production: separate D1 database, separate R2 bucket, separate
+ * Worker name, no custom domain route (deploys to *.workers.dev only).
+ * Never point this at capstone-crm-db or the production Worker name.
+ *
+ * Setup (run once):
+ *   npx wrangler d1 create capstone-crm-dev-db          # paste id below
+ *   npx wrangler d1 migrations apply capstone-crm-dev-db --remote
+ *   npx wrangler r2 bucket create capstone-crm-content-images-dev
+ *   npx wrangler secret put CRM_PASSWORD   --config wrangler.dev.jsonc
+ *   npx wrangler secret put KIE_API_KEY    --config wrangler.dev.jsonc
+ *   npx wrangler secret put OPENAI_API_KEY --config wrangler.dev.jsonc
+ *
+ * Deploy: npm run build && npx opennextjs-cloudflare build && npx wrangler deploy --config wrangler.dev.jsonc
+ */
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "capstone-crm-content-dev",
+	"main": ".open-next/worker.js",
+	"compatibility_date": "2026-06-11",
+	"compatibility_flags": [
+		"nodejs_compat",
+		"global_fetch_strictly_public"
+	],
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "capstone-crm-dev-db",
+			"database_id": "f602989c-a9cc-4660-adb0-b789b19c9047",
+			"migrations_dir": "./migrations"
+		}
+	],
+	"r2_buckets": [
+		{
+			"binding": "CONTENT_IMAGES",
+			"bucket_name": "capstone-crm-content-images-dev"
+		}
+	],
+	"vars": {
+		"CF_ACCOUNT_ID": "32972c58a867f407bf8232803ab11ef3",
+		"CF_SITE_TAG": "dd36ba7ad6c24c4fba6c2350a3f2cb71",
+		"CRM_USERNAME": "capstone"
+	},
+	"assets": {
+		"binding": "ASSETS",
+		"directory": ".open-next/assets"
+	},
+	"images": {
+		"binding": "IMAGES"
+	},
+	"services": [
+		{
+			"binding": "WORKER_SELF_REFERENCE",
+			"service": "capstone-crm-content-dev"
+		}
+	],
+	"observability": {
+		"enabled": true
+	},
+	"upload_source_maps": true
+}

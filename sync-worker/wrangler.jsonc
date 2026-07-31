@@ -1,0 +1,28 @@
+/**
+ * Cron sync worker — pulls Google Sheets finance data and Cloudflare Web
+ * Analytics into the shared D1 database every hour.
+ * Deploy from repo root: npx wrangler deploy -c sync-worker/wrangler.jsonc
+ */
+{
+	"$schema": "../node_modules/wrangler/config-schema.json",
+	"name": "capstone-crm-sync",
+	"main": "./index.ts",
+	"compatibility_date": "2026-06-11",
+	"triggers": {
+		"crons": ["0 * * * *"]
+	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "capstone-crm-db",
+			"database_id": "de61bc98-055d-4824-ab2a-cb6a938a0854"
+		}
+	],
+	"vars": {
+		"CF_ACCOUNT_ID": "32972c58a867f407bf8232803ab11ef3",
+		"CF_SITE_TAG": "dd36ba7ad6c24c4fba6c2350a3f2cb71"
+	},
+	"observability": {
+		"enabled": true
+	}
+}

@@ -1,0 +1,44 @@
+/**
+ * Preview deployment config — AEGIS-9 theme branch.
+ * Deploy with: npx opennextjs-cloudflare deploy --config wrangler.preview.jsonc
+ * Access at: https://capstone-crm-preview.<account>.workers.dev
+ */
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "capstone-crm-preview",
+	"main": ".open-next/worker.js",
+	"compatibility_date": "2026-06-11",
+	"compatibility_flags": [
+		"nodejs_compat",
+		"global_fetch_strictly_public"
+	],
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "capstone-crm-db",
+			"database_id": "de61bc98-055d-4824-ab2a-cb6a938a0854",
+			"migrations_dir": "./migrations"
+		}
+	],
+	"vars": {
+		"CF_ACCOUNT_ID": "32972c58a867f407bf8232803ab11ef3",
+		"CF_SITE_TAG": "dd36ba7ad6c24c4fba6c2350a3f2cb71"
+	},
+	"assets": {
+		"binding": "ASSETS",
+		"directory": ".open-next/assets"
+	},
+	"images": {
+		"binding": "IMAGES"
+	},
+	"services": [
+		{
+			"binding": "WORKER_SELF_REFERENCE",
+			"service": "capstone-crm-preview"
+		}
+	],
+	"observability": {
+		"enabled": true
+	},
+	"upload_source_maps": true
+}

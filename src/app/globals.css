@@ -1,0 +1,318 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--font-sans: var(--font-geist-sans);
+	--font-mono: var(--font-geist-mono);
+	--font-heading: var(--font-geist-sans);
+	--color-chart-6: var(--chart-6);
+	--color-success: var(--success);
+	--color-warning: var(--warning);
+	--color-sidebar-ring: var(--sidebar-ring);
+	--color-sidebar-border: var(--sidebar-border);
+	--color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+	--color-sidebar-accent: var(--sidebar-accent);
+	--color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+	--color-sidebar-primary: var(--sidebar-primary);
+	--color-sidebar-foreground: var(--sidebar-foreground);
+	--color-sidebar: var(--sidebar);
+	--color-chart-5: var(--chart-5);
+	--color-chart-4: var(--chart-4);
+	--color-chart-3: var(--chart-3);
+	--color-chart-2: var(--chart-2);
+	--color-chart-1: var(--chart-1);
+	--color-ring: var(--ring);
+	--color-input: var(--input);
+	--color-border: var(--border);
+	--color-destructive: var(--destructive);
+	--color-accent-foreground: var(--accent-foreground);
+	--color-accent: var(--accent);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-muted: var(--muted);
+	--color-secondary-foreground: var(--secondary-foreground);
+	--color-secondary: var(--secondary);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-primary: var(--primary);
+	--color-popover-foreground: var(--popover-foreground);
+	--color-popover: var(--popover);
+	--color-card-foreground: var(--card-foreground);
+	--color-card: var(--card);
+	--radius-sm: calc(var(--radius) * 0.6);
+	--radius-md: calc(var(--radius) * 0.8);
+	--radius-lg: var(--radius);
+	--radius-xl: calc(var(--radius) * 1.4);
+	--radius-2xl: calc(var(--radius) * 1.8);
+	--radius-3xl: calc(var(--radius) * 2.2);
+	--radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/* AEGIS-9 light mode — warm PCB / FR4 board aesthetic */
+:root {
+	--background: oklch(0.91 0.035 78);
+	--foreground: oklch(0.18 0.03 210);
+	--card: oklch(0.93 0.030 78);
+	--card-foreground: oklch(0.18 0.03 210);
+	--popover: oklch(0.93 0.030 78);
+	--popover-foreground: oklch(0.18 0.03 210);
+	--primary: oklch(0.55 0.19 192);
+	--primary-foreground: oklch(0.98 0 0);
+	--secondary: oklch(0.60 0.19 28);
+	--secondary-foreground: oklch(0.98 0 0);
+	--muted: oklch(0.87 0.028 78);
+	--muted-foreground: oklch(0.42 0.05 80);
+	--accent: oklch(0.87 0.028 78);
+	--accent-foreground: oklch(0.18 0.03 210);
+	--destructive: oklch(0.60 0.22 28);
+	--success: oklch(0.55 0.19 192);
+	--warning: oklch(0.68 0.16 58);
+	--border: oklch(0.72 0.06 70);
+	--input: oklch(0.89 0.025 78);
+	--ring: oklch(0.55 0.19 192);
+	--chart-1: oklch(0.55 0.19 192);
+	--chart-2: oklch(0.60 0.19 28);
+	--chart-3: oklch(0.58 0.26 335);
+	--chart-4: oklch(0.68 0.16 58);
+	--chart-5: oklch(0.55 0.05 78);
+	--chart-6: oklch(0.45 0.06 190);
+	--radius: 0.25rem;
+	--sidebar: oklch(0.88 0.034 76);
+	--sidebar-foreground: oklch(0.18 0.03 210);
+	--sidebar-primary: oklch(0.55 0.19 192);
+	--sidebar-primary-foreground: oklch(0.98 0 0);
+	--sidebar-accent: oklch(0.55 0.19 192 / 0.12);
+	--sidebar-accent-foreground: oklch(0.40 0.16 192);
+	--sidebar-border: oklch(0.70 0.06 70);
+	--sidebar-ring: oklch(0.55 0.19 192);
+}
+
+/* AEGIS-9 dark mode — cyan-teal primary, coral secondary, magenta elevation */
+.dark {
+	--background: oklch(0.07 0.022 210);
+	--foreground: oklch(0.92 0.01 95);
+	--card: oklch(0.12 0.028 205);
+	--card-foreground: oklch(0.92 0.01 95);
+	--popover: oklch(0.12 0.028 205);
+	--popover-foreground: oklch(0.92 0.01 95);
+	--primary: oklch(0.73 0.19 192);
+	--primary-foreground: oklch(0.09 0.025 200);
+	--secondary: oklch(0.66 0.19 28);
+	--secondary-foreground: oklch(0.09 0.025 200);
+	--muted: oklch(0.18 0.030 200);
+	--muted-foreground: oklch(0.55 0.06 190);
+	--accent: oklch(0.20 0.04 200);
+	--accent-foreground: oklch(0.92 0.01 95);
+	--destructive: oklch(0.66 0.19 28);
+	--success: oklch(0.73 0.19 192);
+	--warning: oklch(0.769 0.155 70.7);
+	--border: oklch(0.30 0.06 195);
+	--input: oklch(0.16 0.04 200);
+	--ring: oklch(0.73 0.19 192);
+	--chart-1: oklch(0.73 0.19 192);
+	--chart-2: oklch(0.66 0.19 28);
+	--chart-3: oklch(0.63 0.28 335);
+	--chart-4: oklch(0.769 0.155 70.7);
+	--chart-5: oklch(0.60 0.04 78);
+	--chart-6: oklch(0.55 0.06 190);
+	--radius: 0.25rem;
+	--sidebar: oklch(0.10 0.025 200);
+	--sidebar-foreground: oklch(0.92 0.01 95);
+	--sidebar-primary: oklch(0.73 0.19 192);
+	--sidebar-primary-foreground: oklch(0.09 0.025 200);
+	--sidebar-accent: oklch(0.73 0.19 192 / 0.12);
+	--sidebar-accent-foreground: oklch(0.73 0.19 192);
+	--sidebar-border: oklch(0.30 0.06 195);
+	--sidebar-ring: oklch(0.73 0.19 192);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+	}
+  body {
+    @apply bg-background text-foreground;
+	}
+  button:not(:disabled), [role="button"]:not(:disabled) {
+    cursor: pointer;
+	}
+  html {
+    @apply font-sans;
+	}
+
+  /* ── AEGIS-9 light mode: Warm PCB board with copper traces ── */
+  body {
+    background-color: oklch(0.91 0.035 78);
+    background-image:
+      radial-gradient(ellipse 120% 80% at 50% 50%, transparent 35%, oklch(0.65 0.05 70 / 0.35) 100%),
+      repeating-linear-gradient(0deg,   transparent, transparent 47px, oklch(0.60 0.08 60 / 0.12) 47px, oklch(0.60 0.08 60 / 0.12) 48px),
+      repeating-linear-gradient(90deg,  transparent, transparent 47px, oklch(0.60 0.08 60 / 0.12) 47px, oklch(0.60 0.08 60 / 0.12) 48px),
+      radial-gradient(circle, oklch(0.55 0.10 55 / 0.22) 1.5px, transparent 1.5px);
+    background-size: 100% 100%, 48px 48px, 48px 48px, 48px 48px;
+  }
+
+  /* ── Aethereal + AEGIS-9: Deep background with grid + vignette ── */
+  .dark body {
+    background-color: oklch(0.07 0.022 210);
+    background-image:
+      /* vignette radial */
+      radial-gradient(ellipse 120% 80% at 50% 50%, transparent 40%, oklch(0 0 0 / 0.55) 100%),
+      /* grid traces */
+      repeating-linear-gradient(0deg,   transparent, transparent 47px, oklch(0.73 0.19 192 / 0.08) 47px, oklch(0.73 0.19 192 / 0.08) 48px),
+      repeating-linear-gradient(90deg,  transparent, transparent 47px, oklch(0.73 0.19 192 / 0.08) 47px, oklch(0.73 0.19 192 / 0.08) 48px),
+      /* intersection dots */
+      radial-gradient(circle, oklch(0.73 0.19 192 / 0.16) 1.5px, transparent 1.5px);
+    background-size: 100% 100%, 48px 48px, 48px 48px, 48px 48px;
+  }
+
+  /* ── AEGIS-9: Dialog / sheet / popover — magenta elevation ── */
+  .dark [data-slot="dialog-content"],
+  .dark [data-slot="sheet-content"],
+  .dark [data-slot="popover-content"] {
+    border: 1px solid oklch(0.40 0.10 195) !important;
+    box-shadow: 4px 8px 32px oklch(0.63 0.28 335 / 0.28), 0 0 0 1px oklch(0.63 0.28 335 / 0.10) !important;
+  }
+
+  /* ── Aethereal: Inputs — sunken/recessed look ── */
+  .dark input,
+  .dark textarea {
+    background: oklch(0.065 0.02 205) !important;
+    border: 1px solid oklch(0.26 0.06 195) !important;
+    box-shadow: inset 0 2px 5px oklch(0 0 0 / 0.45), inset 0 1px 0 oklch(0 0 0 / 0.25) !important;
+  }
+  .dark input:focus-visible,
+  .dark textarea:focus-visible {
+    outline: none !important;
+    border-color: oklch(0.73 0.19 192) !important;
+    box-shadow:
+      inset 0 2px 5px oklch(0 0 0 / 0.35),
+      0 0 0 1px oklch(0.73 0.19 192 / 0.6),
+      0 0 12px oklch(0.73 0.19 192 / 0.35) !important;
+  }
+
+  /* ── Aethereal: Primary button — 3D bevel + glow ── */
+  .dark [data-slot="button"][data-variant="default"]:not(:disabled) {
+    background: linear-gradient(160deg, oklch(0.78 0.19 192) 0%, oklch(0.63 0.18 192) 100%) !important;
+    border-color: oklch(0.80 0.19 192) !important;
+    box-shadow:
+      inset 0 1px 0 oklch(1 0 0 / 0.22),
+      inset 0 -2px 0 oklch(0 0 0 / 0.28),
+      0 0 16px oklch(0.73 0.19 192 / 0.45),
+      0 3px 10px oklch(0 0 0 / 0.45);
+    transition: all 0.15s ease;
+  }
+  .dark [data-slot="button"][data-variant="default"]:hover:not(:disabled) {
+    background: linear-gradient(160deg, oklch(0.82 0.19 192) 0%, oklch(0.68 0.18 192) 100%) !important;
+    box-shadow:
+      inset 0 1px 0 oklch(1 0 0 / 0.28),
+      inset 0 -2px 0 oklch(0 0 0 / 0.20),
+      0 0 26px oklch(0.73 0.19 192 / 0.65),
+      0 5px 16px oklch(0 0 0 / 0.50) !important;
+    transform: translateY(-1px);
+  }
+  .dark [data-slot="button"][data-variant="default"]:active:not(:disabled) {
+    transform: translateY(0px) !important;
+    background: linear-gradient(160deg, oklch(0.70 0.19 192) 0%, oklch(0.78 0.19 192) 100%) !important;
+    box-shadow:
+      inset 0 2px 6px oklch(0 0 0 / 0.35),
+      0 0 32px oklch(0.73 0.19 192 / 0.85),
+      0 0 8px oklch(0.73 0.19 192) !important;
+  }
+
+  /* ── Aethereal: Secondary (outline) button — coral bevel ── */
+  .dark [data-slot="button"][data-variant="outline"]:not(:disabled) {
+    border-color: oklch(0.66 0.19 28) !important;
+    color: oklch(0.66 0.19 28) !important;
+    box-shadow:
+      inset 0 1px 0 oklch(1 0 0 / 0.08),
+      0 0 10px oklch(0.66 0.19 28 / 0.20),
+      0 2px 8px oklch(0 0 0 / 0.40);
+    transition: all 0.15s ease;
+  }
+  .dark [data-slot="button"][data-variant="outline"]:hover:not(:disabled) {
+    background: oklch(0.66 0.19 28 / 0.10) !important;
+    box-shadow:
+      inset 0 1px 0 oklch(1 0 0 / 0.10),
+      0 0 18px oklch(0.66 0.19 28 / 0.40),
+      0 4px 14px oklch(0 0 0 / 0.45) !important;
+    transform: translateY(-1px);
+  }
+
+  /* ── AEGIS-9: Sidebar — active item left-bar via inset shadow ── */
+  .dark [data-sidebar="menu-button"][data-active="true"] {
+    border-radius: 0 2px 2px 0 !important;
+    box-shadow: inset 3px 0 0 oklch(0.73 0.19 192), inset 0 0 16px oklch(0.73 0.19 192 / 0.06) !important;
+  }
+
+  /* ── AEGIS-9: Progress track + glowing fill (shadcn Progress) ── */
+  .dark [data-slot="progress"] {
+    background: oklch(0.16 0.04 200) !important;
+    border: 1px solid oklch(0.30 0.06 195);
+  }
+  .dark [data-slot="progress-indicator"] {
+    background: linear-gradient(90deg, oklch(0.55 0.19 192), oklch(0.82 0.19 192)) !important;
+    box-shadow: 0 0 10px oklch(0.73 0.19 192 / 0.65);
+  }
+
+  /* ── AEGIS-9: Table rows ── */
+  .dark tbody tr:hover td {
+    background: oklch(0.73 0.19 192 / 0.06);
+  }
+
+  /* ── AEGIS-9: Monospace data values ── */
+  .dark .tabular-nums {
+    font-family: var(--font-geist-mono);
+    letter-spacing: 0.02em;
+  }
+}
+
+/* ── AEGIS-9: Status indicator dot animations ── */
+@keyframes aegis-pulse-teal {
+  0%, 100% { box-shadow: 0 0 3px 1px oklch(0.73 0.19 192 / 0.8); }
+  50%       { box-shadow: 0 0 7px 3px oklch(0.73 0.19 192 / 0.3); }
+}
+@keyframes aegis-pulse-coral {
+  0%, 100% { box-shadow: 0 0 3px 1px oklch(0.66 0.19 28 / 0.8); }
+  50%       { box-shadow: 0 0 7px 3px oklch(0.66 0.19 28 / 0.3); }
+}
+@keyframes aegis-pulse-magenta {
+  0%, 100% { box-shadow: 0 0 3px 1px oklch(0.63 0.28 335 / 0.8); }
+  50%       { box-shadow: 0 0 7px 3px oklch(0.63 0.28 335 / 0.3); }
+}
+
+.aegis-dot-online   { width: 8px; height: 8px; border-radius: 50%; background: oklch(0.73 0.19 192); animation: aegis-pulse-teal    2s ease-in-out infinite; }
+.aegis-dot-busy     { width: 8px; height: 8px; border-radius: 50%; background: oklch(0.63 0.28 335); animation: aegis-pulse-magenta 2s ease-in-out infinite; }
+.aegis-dot-warning  { width: 8px; height: 8px; border-radius: 50%; background: oklch(0.66 0.19 28);  animation: aegis-pulse-coral   2s ease-in-out infinite; }
+.aegis-dot-offline  { width: 8px; height: 8px; border-radius: 50%; background: oklch(0.35 0.03 200); }
+
+/* ── AEGIS-9: Section frame (titled border box) ── */
+.aegis-section {
+  border: 1px solid oklch(0.30 0.06 195);
+  border-radius: 2px;
+  position: relative;
+  padding: 1rem;
+}
+.aegis-section-title {
+  position: absolute;
+  top: -0.55rem;
+  left: 0.75rem;
+  background: var(--card, oklch(0.13 0.03 200));
+  padding: 0 0.4rem;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: oklch(0.73 0.19 192);
+}
+
+/* ── AEGIS-9: Micro-data annotation ── */
+.aegis-micro {
+  font-size: 0.55rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: oklch(0.55 0.06 190);
+  font-family: var(--font-geist-mono);
+}
