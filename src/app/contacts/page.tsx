@@ -13,6 +13,8 @@ import { Badge } from "@/components/ui/badge";
 import { ContactsFilterBar } from "@/components/contacts/contacts-filter-bar";
 import { GrantBadge, SegmentBadge, StatusBadge } from "@/components/contacts/status-badges";
 import { getDb } from "@/lib/db";
+import { getActiveBrandView } from "@/lib/brand-context";
+import { BRANDS, brandViewLabel } from "@/lib/brands";
 import { LEAD_SOURCE_LABELS } from "@/lib/constants";
 import { formatDate, relativeDays, todaySG } from "@/lib/format";
 import { listContacts } from "@/lib/queries";
@@ -28,6 +30,7 @@ export default async function ContactsPage({
   const str = (v: string | string[] | undefined) => (typeof v === "string" ? v : undefined);
 
   const db = await getDb();
+  const brand = await getActiveBrandView();
   const contacts = await listContacts(db, {
     search: str(params.search),
     segment: str(params.segment),
@@ -35,15 +38,17 @@ export default async function ContactsPage({
     lead_source: str(params.lead_source),
     grant_eligible: str(params.grant_eligible) === "1",
     overdue: str(params.overdue) === "1",
+    brand,
   });
 
   const today = todaySG();
+  const showBrandColumn = brand === "group";
 
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold">Contacts</h2>
+          <h2 className="text-lg font-semibold">Contacts · {brandViewLabel(brand)}</h2>
           <p className="text-sm text-muted-foreground">
             {contacts.length} contact{contacts.length === 1 ? "" : "s"}
           </p>
@@ -57,6 +62,7 @@ export default async function ContactsPage({
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
+              {showBrandColumn && <TableHead className="hidden md:table-cell">Brand</TableHead>}
               <TableHead className="hidden md:table-cell">Segment</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="hidden lg:table-cell">Billing</TableHead>
@@ -69,7 +75,7 @@ export default async function ContactsPage({
           <TableBody>
             {contacts.length === 0 && (
               <TableRow>
-                <TableCell colSpan={8} className="h-24 text-center text-muted-foreground">
+                <TableCell colSpan={showBrandColumn ? 9 : 8} className="h-24 text-center text-muted-foreground">
                   No contacts yet. Add your first contact with the button in the header.
                 </TableCell>
               </TableRow>
@@ -82,6 +88,17 @@ export default async function ContactsPage({
                   </Link>
                   {c.company && <div className="text-xs text-muted-foreground">{c.company}</div>}
                 </TableCell>
+                {showBrandColumn && (
+                  <TableCell className="hidden md:table-cell">
+                    <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                      <span
+                        className="size-2 rounded-full"
+                        style={{ background: BRANDS[c.brand]?.color }}
+                      />
+                      {BRANDS[c.brand]?.short ?? c.brand}
+                    </span>
+                  </TableCell>
+                )}
                 <TableCell className="hidden md:table-cell">
                   <SegmentBadge segment={c.segment} />
                 </TableCell>

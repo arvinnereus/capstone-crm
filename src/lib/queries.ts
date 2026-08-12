@@ -1,4 +1,5 @@
 import { todaySG } from "@/lib/format";
+import type { BrandView } from "@/lib/brands";
 import type {
   ContactListRow,
   ContactRow,
@@ -20,12 +21,17 @@ export type ContactFilters = {
   lead_source?: string;
   grant_eligible?: boolean;
   overdue?: boolean;
+  brand?: BrandView;
 };
 
 export async function listContacts(db: D1Database, filters: ContactFilters): Promise<ContactListRow[]> {
   const conditions: string[] = [];
   const params: (string | number)[] = [];
 
+  if (filters.brand && filters.brand !== "group") {
+    conditions.push("c.brand = ?");
+    params.push(filters.brand);
+  }
   if (filters.search) {
     conditions.push("(c.name LIKE ? OR c.company LIKE ? OR c.email LIKE ?)");
     const like = `%${filters.search}%`;
@@ -109,23 +115,34 @@ export async function getContactDetail(db: D1Database, id: string): Promise<Cont
   };
 }
 
-export async function listDealsWithContacts(db: D1Database): Promise<DealWithContact[]> {
-  const { results } = await db
-    .prepare(
-      `SELECT d.*, c.name AS contact_name, c.company AS contact_company
-       FROM deals d JOIN contacts c ON c.id = d.contact_id
-       ORDER BY d.updated_at DESC`
-    )
-    .all<DealWithContact>();
+export async function listDealsWithContacts(
+  db: D1Database,
+  brand: BrandView = "group"
+): Promise<DealWithContact[]> {
+  const where = brand !== "group" ? "WHERE d.brand = ?" : "";
+  const stmt = db.prepare(
+    `SELECT d.*, c.name AS contact_name, c.company AS contact_company
+     FROM deals d JOIN contacts c ON c.id = d.contact_id
+     ${where} ORDER BY d.updated_at DESC`
+  );
+  const { results } = await (brand !== "group" ? stmt.bind(brand) : stmt).all<DealWithContact>();
   return results;
 }
 
 export async function listFollowUps(
   db: D1Database,
-  filter: "open" | "done" | "all"
+  filter: "open" | "done" | "all",
+  brand: BrandView = "group"
 ): Promise<FollowUpWithContext[]> {
-  const where =
-    filter === "open" ? "WHERE f.done = 0" : filter === "done" ? "WHERE f.done = 1" : "";
+  const conditions: string[] = [];
+  const params: string[] = [];
+  if (filter === "open") conditions.push("f.done = 0");
+  if (filter === "done") conditions.push("f.done = 1");
+  if (brand !== "group") {
+    conditions.push("c.brand = ?");
+    params.push(brand);
+  }
+  const where = conditions.length ? `WHERE ${conditions.join(" AND ")}` : "";
   const { results } = await db
     .prepare(
       `SELECT f.*, c.name AS contact_name, c.company AS contact_company, d.name AS deal_name
@@ -134,6 +151,7 @@ export async function listFollowUps(
        LEFT JOIN deals d ON d.id = f.deal_id
        ${where} ORDER BY f.done ASC, f.due_date ASC LIMIT 500`
     )
+    .bind(...params)
     .all<FollowUpWithContext>();
   return results;
 }

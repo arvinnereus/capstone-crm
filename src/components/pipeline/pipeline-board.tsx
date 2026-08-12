@@ -15,17 +15,20 @@ import { toast } from "sonner";
 import { CloseDealDialog, type CloseIntent } from "@/components/pipeline/close-deal-dialog";
 import { DealCard } from "@/components/pipeline/deal-card";
 import { DealDrawer } from "@/components/pipeline/deal-drawer";
-import { STAGE_LABELS, STAGES, type Stage } from "@/lib/constants";
+import { STAGES, type Stage } from "@/lib/constants";
+import { stageLabelsFor, type BrandView } from "@/lib/brands";
 import { formatSGDCompact } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { DealWithContact } from "@/lib/types";
 
 function StageColumn({
   stage,
+  stageLabel,
   deals,
   onCardClick,
 }: {
   stage: Stage;
+  stageLabel: string;
   deals: DealWithContact[];
   onCardClick: (deal: DealWithContact) => void;
 }) {
@@ -46,7 +49,7 @@ function StageColumn({
       )}
     >
       <div className="flex items-baseline justify-between border-b px-3 py-2">
-        <span className="text-sm font-semibold">{STAGE_LABELS[stage]}</span>
+        <span className="text-sm font-semibold">{stageLabel}</span>
         <span className="font-mono text-xs tabular-nums text-muted-foreground">
           {deals.length} · {formatSGDCompact(total)}
         </span>
@@ -60,7 +63,14 @@ function StageColumn({
   );
 }
 
-export function PipelineBoard({ initialDeals }: { initialDeals: DealWithContact[] }) {
+export function PipelineBoard({
+  initialDeals,
+  brand = "group",
+}: {
+  initialDeals: DealWithContact[];
+  brand?: BrandView;
+}) {
+  const stageLabels = stageLabelsFor(brand);
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -146,6 +156,7 @@ export function PipelineBoard({ initialDeals }: { initialDeals: DealWithContact[
             <StageColumn
               key={stage}
               stage={stage}
+              stageLabel={stageLabels[stage]}
               deals={byStage.get(stage) ?? []}
               onCardClick={(deal) => setDealParam(deal.id)}
             />

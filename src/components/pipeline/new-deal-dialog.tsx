@@ -23,7 +23,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ContactCombobox, type ContactOption } from "@/components/contacts/contact-combobox";
-import { STREAM_LABELS, STREAMS } from "@/lib/constants";
+import { STREAM_LABELS } from "@/lib/constants";
+import { isBrandId, streamsFor } from "@/lib/brands";
+import { getClientDefaultBrand } from "@/lib/brand-client";
 
 export function NewDealDialog({
   open,
@@ -41,6 +43,11 @@ export function NewDealDialog({
   const [valueSGD, setValueSGD] = useState("");
   const [expectedClose, setExpectedClose] = useState("");
   const [saving, setSaving] = useState(false);
+
+  // Stream options follow the chosen contact's brand (deals inherit it server-side).
+  const chosenBrandRaw = (contact ?? initialContact)?.brand;
+  const dealBrand = isBrandId(chosenBrandRaw) ? chosenBrandRaw : getClientDefaultBrand();
+  const streamOptions = streamsFor(dealBrand);
 
   const submit = async () => {
     const chosen = contact ?? initialContact;
@@ -106,7 +113,7 @@ export function NewDealDialog({
                   <SelectValue placeholder="Select stream" />
                 </SelectTrigger>
                 <SelectContent>
-                  {STREAMS.map((s) => (
+                  {streamOptions.map((s) => (
                     <SelectItem key={s} value={s}>
                       {STREAM_LABELS[s]}
                     </SelectItem>

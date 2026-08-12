@@ -38,7 +38,10 @@ export async function POST(request: Request) {
   if (error) return error;
 
   const db = await getDb();
-  const contact = await db.prepare("SELECT id FROM contacts WHERE id = ?").bind(data.contact_id).first();
+  const contact = await db
+    .prepare("SELECT id, brand FROM contacts WHERE id = ?")
+    .bind(data.contact_id)
+    .first<{ id: string; brand: string }>();
   if (!contact) return jsonError("Contact not found", 404);
 
   const id = ulid();
@@ -47,8 +50,8 @@ export async function POST(request: Request) {
   await db.batch([
     db
       .prepare(
-        `INSERT INTO deals (id, contact_id, name, stream, stage, value_cents, expected_close_date, stage_entered_at, notes, created_at, updated_at)
-         VALUES (?, ?, ?, ?, 'lead', ?, ?, ?, ?, ?, ?)`
+        `INSERT INTO deals (id, contact_id, name, stream, stage, value_cents, expected_close_date, stage_entered_at, notes, brand, created_at, updated_at)
+         VALUES (?, ?, ?, ?, 'lead', ?, ?, ?, ?, ?, ?, ?)`
       )
       .bind(
         id,
@@ -59,6 +62,7 @@ export async function POST(request: Request) {
         data.expected_close_date ?? null,
         now,
         data.notes ?? null,
+        contact.brand,
         now,
         now
       ),

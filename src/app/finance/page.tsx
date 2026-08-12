@@ -12,6 +12,8 @@ import { ClientBar } from "@/components/finance/client-bar";
 import { ExpenseDonut } from "@/components/finance/expense-donut";
 import { SyncButton } from "@/components/sync-button";
 import { getDb } from "@/lib/db";
+import { getActiveBrandView } from "@/lib/brand-context";
+import { BRANDS, brandViewLabel } from "@/lib/brands";
 import { REVENUE_TARGET_CENTS } from "@/lib/constants";
 import { formatDate, formatSGD, formatSGDPrecise, todaySG } from "@/lib/format";
 import type { FinanceTransactionRow } from "@/lib/types";
@@ -20,43 +22,52 @@ export const dynamic = "force-dynamic";
 
 export default async function FinancePage() {
   const db = await getDb();
+  const brand = await getActiveBrandView();
   const year = todaySG().slice(0, 4);
+  const scoped = brand !== "group";
+  const brandCond = scoped ? "AND brand = ?" : "";
+  const brandParams: string[] = scoped ? [brand] : [];
 
   const [totals, byClient, byCategory, eisd, recentIncome, recentExpenses, lastSync] =
     await Promise.all([
       db
         .prepare(
           `SELECT kind, SUM(amount_cents) AS cents FROM finance_transactions
-           WHERE substr(txn_date, 1, 4) = ? GROUP BY kind`
+           WHERE substr(txn_date, 1, 4) = ? ${brandCond} GROUP BY kind`
         )
-        .bind(year)
+        .bind(year, ...brandParams)
         .all<{ kind: string; cents: number }>(),
       db
         .prepare(
           `SELECT client, SUM(amount_cents) AS cents FROM finance_transactions
-           WHERE kind = 'income' GROUP BY client ORDER BY cents DESC LIMIT 10`
+           WHERE kind = 'income' ${brandCond} GROUP BY client ORDER BY cents DESC LIMIT 10`
         )
+        .bind(...brandParams)
         .all<{ client: string; cents: number }>(),
       db
         .prepare(
           `SELECT category, SUM(amount_cents) AS cents FROM finance_transactions
-           WHERE kind = 'expense' GROUP BY category ORDER BY cents DESC`
+           WHERE kind = 'expense' ${brandCond} GROUP BY category ORDER BY cents DESC`
         )
+        .bind(...brandParams)
         .all<{ category: string; cents: number }>(),
       db
         .prepare(
-          "SELECT SUM(amount_cents) AS cents FROM finance_transactions WHERE kind = 'expense' AND grant_qualifying = 1"
+          `SELECT SUM(amount_cents) AS cents FROM finance_transactions WHERE kind = 'expense' AND grant_qualifying = 1 ${brandCond}`
         )
+        .bind(...brandParams)
         .first<{ cents: number | null }>(),
       db
         .prepare(
-          "SELECT * FROM finance_transactions WHERE kind = 'income' ORDER BY txn_date DESC LIMIT 5"
+          `SELECT * FROM finance_transactions WHERE kind = 'income' ${brandCond} ORDER BY txn_date DESC LIMIT 5`
         )
+        .bind(...brandParams)
         .all<FinanceTransactionRow>(),
       db
         .prepare(
-          "SELECT * FROM finance_transactions WHERE kind = 'expense' ORDER BY txn_date DESC LIMIT 5"
+          `SELECT * FROM finance_transactions WHERE kind = 'expense' ${brandCond} ORDER BY txn_date DESC LIMIT 5`
         )
+        .bind(...brandParams)
         .all<FinanceTransactionRow>(),
       db
         .prepare(
@@ -74,9 +85,11 @@ export default async function FinancePage() {
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
-          <h2 className="text-lg font-semibold">Finance Snapshot</h2>
+          <h2 className="text-lg font-semibold">Finance Snapshot · {brandViewLabel(brand)}</h2>
           <p className="text-sm text-muted-foreground">
-            Read-only view of the Capstone Group Finance Tracker V2
+            {scoped
+              ? `${BRANDS[brand].entity} · Sheets sync covers Consulting; Stripe ingestion for Hatch/AI Lab lands in v3.5`
+              : "Both entities · read-only view of the Capstone Group Finance Tracker V2"}
             {lastSync?.finished_at && ` · last synced ${formatDate(lastSync.finished_at)}`}
             {lastSync?.status === "error" && (
               <span className="text-destructive"> · last sync failed: {lastSync.message}</span>

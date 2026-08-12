@@ -7,6 +7,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppHeader } from "@/components/shell/app-header";
 import { AppSidebar } from "@/components/shell/app-sidebar";
+import { getActiveBrandView } from "@/lib/brand-context";
 import { CommandMenu } from "@/components/shell/command-menu";
 import { ThemeProvider } from "@/components/theme-provider";
 
@@ -25,11 +26,12 @@ export const metadata: Metadata = {
 	description: "Business Command Center CRM for Capstone Consulting",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
 	children,
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
+	const activeBrand = await getActiveBrandView();
 	return (
 		<html lang="en" suppressHydrationWarning>
 			<head>
@@ -39,7 +41,7 @@ export default function RootLayout({
 				<ThemeProvider>
 					<TooltipProvider>
 						<SidebarProvider>
-							<AppSidebar />
+							<AppSidebar activeBrand={activeBrand} />
 							<SidebarInset>
 								<AppHeader />
 								<main className="flex-1 p-4 md:p-6">{children}</main>

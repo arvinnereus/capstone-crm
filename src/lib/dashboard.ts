@@ -1,9 +1,11 @@
 import { OPEN_STAGES, REVENUE_TARGET_CENTS, STAGES, type Stage, type Stream } from "@/lib/constants";
+import type { BrandId, BrandView } from "@/lib/brands";
 import { todaySG } from "@/lib/format";
 
 export type Milestone = { date: string; target_cents: number };
 
 export type DashboardData = {
+  brand: BrandView;
   business: {
     cumulative_cents: number;
     target_cents: number;
@@ -11,6 +13,8 @@ export type DashboardData = {
     milestones: Milestone[];
     monthly_cumulative: { month: string; cents: number }[];
     by_stream: { stream: Stream; cents: number }[];
+    /** Group view only: won revenue rolled up per brand. */
+    by_brand: { brand: BrandId; cents: number }[];
     month_income_cents: number;
     month_expense_cents: number;
     finance_synced_at: string | null;
@@ -49,9 +53,16 @@ function dateDaysAgo(days: number): string {
   return d.toISOString().slice(0, 10);
 }
 
-export async function getDashboardData(db: D1Database): Promise<DashboardData> {
+export async function getDashboardData(
+  db: D1Database,
+  brand: BrandView = "group"
+): Promise<DashboardData> {
   const today = todaySG();
   const thisMonth = today.slice(0, 7);
+  const scoped = brand !== "group";
+  // Interpolated fragments are fixed strings; the brand value itself is always bound.
+  const brandCond = scoped ? "AND brand = ?" : "";
+  const brandParams: string[] = scoped ? [brand] : [];
 
   const settingsRows = await db
     .prepare("SELECT key, value FROM settings WHERE key IN ('revenue_start_date','milestones')")
@@ -64,6 +75,7 @@ export async function getDashboardData(db: D1Database): Promise<DashboardData> {
     monthlyIncome,
     monthTotals,
     streamRows,
+    brandRows,
     dealRows,
     overdueRow,
     leadRows,
@@ -76,34 +88,50 @@ export async function getDashboardData(db: D1Database): Promise<DashboardData> {
     db
       .prepare(
         `SELECT substr(txn_date, 1, 7) AS month, SUM(amount_cents) AS cents
-         FROM finance_transactions WHERE kind = 'income' AND txn_date >= ?
+         FROM finance_transactions WHERE kind = 'income' AND txn_date >= ? ${brandCond}
          GROUP BY month ORDER BY month`
       )
-      .bind(revenueStart)
+      .bind(revenueStart, ...brandParams)
       .all<{ month: string; cents: number }>(),
     db
       .prepare(
         `SELECT kind, SUM(amount_cents) AS cents FROM finance_transactions
-         WHERE substr(txn_date, 1, 7) = ? GROUP BY kind`
+         WHERE substr(txn_date, 1, 7) = ? ${brandCond} GROUP BY kind`
       )
-      .bind(thisMonth)
+      .bind(thisMonth, ...brandParams)
       .all<{ kind: string; cents: number }>(),
     db
       .prepare(
         `SELECT stream, SUM(COALESCE(final_value_cents, value_cents)) AS cents
-         FROM deals WHERE stage = 'won' GROUP BY stream ORDER BY cents DESC`
+         FROM deals WHERE stage = 'won' ${brandCond} GROUP BY stream ORDER BY cents DESC`
       )
+      .bind(...brandParams)
       .all<{ stream: Stream; cents: number }>(),
     db
-      .prepare(`SELECT stage, COUNT(*) AS count, SUM(value_cents) AS value_cents FROM deals GROUP BY stage`)
+      .prepare(
+        `SELECT brand, SUM(COALESCE(final_value_cents, value_cents)) AS cents
+         FROM deals WHERE stage = 'won' GROUP BY brand ORDER BY cents DESC`
+      )
+      .all<{ brand: BrandId; cents: number }>(),
+    db
+      .prepare(
+        `SELECT stage, COUNT(*) AS count, SUM(value_cents) AS value_cents FROM deals
+         WHERE 1=1 ${brandCond} GROUP BY stage`
+      )
+      .bind(...brandParams)
       .all<{ stage: Stage; count: number; value_cents: number }>(),
     db
-      .prepare("SELECT COUNT(*) AS count FROM follow_ups WHERE done = 0 AND due_date < ?")
-      .bind(today)
+      .prepare(
+        `SELECT COUNT(*) AS count FROM follow_ups f JOIN contacts c ON c.id = f.contact_id
+         WHERE f.done = 0 AND f.due_date < ? ${scoped ? "AND c.brand = ?" : ""}`
+      )
+      .bind(today, ...brandParams)
       .first<{ count: number }>(),
     db
-      .prepare("SELECT lead_source, created_at FROM contacts WHERE created_at >= ?")
-      .bind(isoDaysAgo(56))
+      .prepare(
+        `SELECT lead_source, created_at FROM contacts WHERE created_at >= ? ${brandCond}`
+      )
+      .bind(isoDaysAgo(56), ...brandParams)
       .all<{ lead_source: string | null; created_at: string }>(),
     db
       .prepare("SELECT day, visitors, page_views FROM analytics_daily WHERE day >= ? ORDER BY day")
@@ -183,6 +211,7 @@ export async function getDashboardData(db: D1Database): Promise<DashboardData> {
   const pageViews7 = last7.reduce((sum, r) => sum + r.page_views, 0);
 
   return {
+    brand,
     business: {
       cumulative_cents: cumulative,
       target_cents: milestones.length
@@ -192,6 +221,7 @@ export async function getDashboardData(db: D1Database): Promise<DashboardData> {
       milestones,
       monthly_cumulative: monthlyCumulative,
       by_stream: streamRows.results,
+      by_brand: brandRows.results,
       month_income_cents: monthIncome,
       month_expense_cents: monthExpense,
       finance_synced_at: financeSync?.finished_at ?? null,

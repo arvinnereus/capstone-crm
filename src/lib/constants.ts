@@ -20,12 +20,23 @@ export const STAGE_LABELS: Record<Stage, string> = {
 };
 
 export const STREAMS = [
+  // Capstone Consulting
   "fa",
   "mnc",
   "wsq_adapt",
   "government",
   "asean_licensing",
   "digital",
+  // Hatch Studio
+  "hatch_starter",
+  "hatch_business",
+  "hatch_custom",
+  "hatch_care_plan",
+  // Capstone AI Lab
+  "ailab_adult",
+  "ailab_kids",
+  "ailab_silver",
+  "ailab_family",
 ] as const;
 export type Stream = (typeof STREAMS)[number];
 
@@ -36,6 +47,14 @@ export const STREAM_LABELS: Record<Stream, string> = {
   government: "Government",
   asean_licensing: "ASEAN Licensing",
   digital: "Digital Products",
+  hatch_starter: "Starter Sites",
+  hatch_business: "Business Sites",
+  hatch_custom: "Custom Sites",
+  hatch_care_plan: "Care Plans",
+  ailab_adult: "Adult Tier",
+  ailab_kids: "Kids Tier",
+  ailab_silver: "Silver Tier",
+  ailab_family: "Family Bundle",
 };
 
 /** Fixed chart color per stream — a stream is always the same color in every chart. */
@@ -46,6 +65,14 @@ export const STREAM_COLORS: Record<Stream, string> = {
   government: "var(--chart-4)",
   asean_licensing: "var(--chart-5)",
   digital: "var(--chart-6)",
+  hatch_starter: "var(--chart-1)",
+  hatch_business: "var(--chart-2)",
+  hatch_custom: "var(--chart-3)",
+  hatch_care_plan: "var(--chart-4)",
+  ailab_adult: "var(--chart-1)",
+  ailab_kids: "var(--chart-2)",
+  ailab_silver: "var(--chart-3)",
+  ailab_family: "var(--chart-4)",
 };
 
 export const SEGMENTS = ["FA", "MNC", "GOV", "SME"] as const;
@@ -73,6 +100,10 @@ export const LEAD_SOURCES = [
   "referral",
   "website",
   "event",
+  "telegram",
+  "stripe",
+  "waitlist",
+  "meta_ads",
   "other",
 ] as const;
 export type LeadSource = (typeof LEAD_SOURCES)[number];
@@ -83,6 +114,10 @@ export const LEAD_SOURCE_LABELS: Record<LeadSource, string> = {
   referral: "Referral",
   website: "Website",
   event: "Event",
+  telegram: "Telegram",
+  stripe: "Stripe",
+  waitlist: "Waitlist",
+  meta_ads: "Meta Ads",
   other: "Other",
 };
 

@@ -9,6 +9,7 @@ import type {
   Stream,
   TouchpointType,
 } from "@/lib/constants";
+import type { BrandId } from "@/lib/brands";
 
 export type ContactRow = {
   id: string;
@@ -23,6 +24,7 @@ export type ContactRow = {
   grant_eligible: number;
   notes: string | null;
   external_ref: string | null;
+  brand: BrandId;
   created_at: string;
   updated_at: string;
 };
@@ -39,6 +41,7 @@ export type DealRow = {
   name: string;
   stream: Stream;
   stage: Stage;
+  brand: BrandId;
   value_cents: number;
   expected_close_date: string | null;
   stage_entered_at: string;
@@ -138,6 +141,7 @@ export type ContentShotRow = {
 export type FinanceTransactionRow = {
   id: string;
   kind: "income" | "expense";
+  brand: BrandId;
   txn_date: string | null;
   description: string | null;
   client: string | null;

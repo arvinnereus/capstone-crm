@@ -23,6 +23,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { BrandSwitcher } from "@/components/shell/brand-switcher";
+import type { BrandView } from "@/lib/brands";
 
 const NAV_ITEMS = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
@@ -34,7 +36,7 @@ const NAV_ITEMS = [
   { title: "Content", url: "/content", icon: Wand2 },
 ];
 
-export function AppSidebar() {
+export function AppSidebar({ activeBrand }: { activeBrand: BrandView }) {
   const pathname = usePathname();
 
   const isActive = (url: string) =>
@@ -61,6 +63,11 @@ export function AppSidebar() {
                 </div>
               </Link>
             </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <div className="px-1 pt-1">
+              <BrandSwitcher active={activeBrand} />
+            </div>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>

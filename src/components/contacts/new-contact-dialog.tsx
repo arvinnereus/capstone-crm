@@ -32,8 +32,11 @@ import {
   SEGMENT_LABELS,
   SEGMENTS,
 } from "@/lib/constants";
+import { BRAND_LIST } from "@/lib/brands";
+import { getClientDefaultBrand } from "@/lib/brand-client";
 
 const EMPTY = {
+  brand: "",
   name: "",
   company: "",
   role: "",
@@ -72,6 +75,7 @@ export function NewContactDialog({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...form,
+          brand: form.brand || getClientDefaultBrand(),
           name: form.name.trim(),
           segment: form.segment || null,
           lead_source: form.lead_source || null,
@@ -99,6 +103,27 @@ export function NewContactDialog({
           <DialogDescription>Add a person to the CRM.</DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-2">
+          <div className="grid gap-2">
+            <Label>Business *</Label>
+            <Select
+              value={form.brand || getClientDefaultBrand()}
+              onValueChange={(v) => set("brand", v)}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {BRAND_LIST.map((b) => (
+                  <SelectItem key={b.id} value={b.id}>
+                    <span className="flex items-center gap-2">
+                      <span className="size-2 rounded-full" style={{ background: b.color }} />
+                      {b.label}
+                    </span>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="grid gap-2">
               <Label htmlFor="nc-name">Name *</Label>

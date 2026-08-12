@@ -19,7 +19,7 @@ export async function GET(request: Request) {
     const like = `%${search}%`;
     params.push(like, like, like);
   }
-  for (const field of ["segment", "status", "lead_source"] as const) {
+  for (const field of ["segment", "status", "lead_source", "brand"] as const) {
     const value = url.searchParams.get(field);
     if (value) {
       conditions.push(`c.${field} = ?`);
@@ -67,8 +67,8 @@ export async function POST(request: Request) {
   try {
     await db
       .prepare(
-        `INSERT INTO contacts (id, name, company, role, email, phone, segment, status, lead_source, grant_eligible, notes, created_at, updated_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+        `INSERT INTO contacts (id, name, company, role, email, phone, segment, status, lead_source, grant_eligible, notes, brand, created_at, updated_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
       )
       .bind(
         id,
@@ -82,6 +82,7 @@ export async function POST(request: Request) {
         data.lead_source ?? null,
         data.grant_eligible ? 1 : 0,
         data.notes ?? null,
+        data.brand,
         now,
         now
       )

@@ -19,6 +19,13 @@ export function LeadsChart({
 }: {
   weekly: { week: string; leads: number; abigail: number }[];
 }) {
+  if (weekly.every((w) => w.leads === 0 && w.abigail === 0)) {
+    return (
+      <p className="flex h-32 items-center justify-center text-sm text-muted-foreground">
+        No new leads in the last 8 weeks — weekly lead volume appears here.
+      </p>
+    );
+  }
   return (
     <ChartContainer config={chartConfig} className="h-32 w-full">
       <AreaChart data={weekly} margin={{ top: 4, right: 4, bottom: 0, left: 4 }}>

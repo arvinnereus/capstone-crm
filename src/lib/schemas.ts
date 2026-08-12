@@ -9,10 +9,14 @@ import {
   STREAMS,
   TOUCHPOINT_TYPES,
 } from "@/lib/constants";
+import { BRAND_IDS } from "@/lib/brands";
 
 const dateString = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Expected YYYY-MM-DD");
 
+const brandId = z.enum(BRAND_IDS);
+
 export const contactCreateSchema = z.object({
+  brand: brandId.default("consulting"),
   name: z.string().trim().min(1).max(200),
   company: z.string().trim().max(200).nullish(),
   role: z.string().trim().max(200).nullish(),

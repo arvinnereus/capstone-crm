@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { ulid } from "ulid";
 import { getDb } from "@/lib/db";
 import { nowISO } from "@/lib/format";
+import { isBrandId } from "@/lib/brands";
 
 // Public write-only endpoint — excluded from Basic auth middleware matcher.
 // Called by: capstoneconsulting.com.sg contact form, assessment-worker, Abigail/OpenClaw webhook.
@@ -17,6 +18,7 @@ export async function POST(request: Request) {
 
   const {
     source,        // 'form' | 'assessment' | 'whatsapp'
+    brand,         // optional: 'consulting' | 'hatch' | 'ailab' (defaults to consulting)
     name,
     email,
     phone,
@@ -26,6 +28,8 @@ export async function POST(request: Request) {
     score,
     level,
   } = body as Record<string, string | number | null | undefined>;
+
+  const contactBrand = isBrandId(brand as string) ? (brand as string) : "consulting";
 
   const leadSourceMap: Record<string, string> = {
     form: "website",
@@ -52,8 +56,8 @@ export async function POST(request: Request) {
   try {
     await db
       .prepare(
-        `INSERT INTO contacts (id, name, company, email, phone, lead_source, notes, status, grant_eligible, created_at, updated_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, 'prospect', 0, ?, ?)`
+        `INSERT INTO contacts (id, name, company, email, phone, lead_source, notes, status, grant_eligible, brand, created_at, updated_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, 'prospect', 0, ?, ?, ?)`
       )
       .bind(
         id,
@@ -63,6 +67,7 @@ export async function POST(request: Request) {
         (phone as string) ?? null,
         lead_source,
         notes,
+        contactBrand,
         now,
         now
       )

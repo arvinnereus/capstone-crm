@@ -6,10 +6,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FunnelSummary } from "@/components/dashboard/funnel-summary";
 import { LeadsChart } from "@/components/dashboard/leads-chart";
 import { RevenueHero } from "@/components/dashboard/revenue-hero";
-import { StreamChart } from "@/components/dashboard/stream-chart";
+import { BrandRevenueChart, StreamChart } from "@/components/dashboard/stream-chart";
 import { TrafficChart } from "@/components/dashboard/traffic-chart";
 import { getDashboardData } from "@/lib/dashboard";
 import { getDb } from "@/lib/db";
+import { getActiveBrandView } from "@/lib/brand-context";
+import { BRANDS, brandViewLabel } from "@/lib/brands";
 import { formatDate, formatSGD } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
@@ -29,12 +31,25 @@ function PanelTitle({ title, href, hint }: { title: string; href: string; hint?:
 
 export default async function CommandCenterPage() {
   const db = await getDb();
-  const data = await getDashboardData(db);
+  const brand = await getActiveBrandView();
+  const data = await getDashboardData(db, brand);
   const { business, pipeline, marketing, website } = data;
   const net = business.month_income_cents - business.month_expense_cents;
+  const isGroup = brand === "group";
 
   return (
     <div className="flex flex-col gap-4">
+      <div className="flex items-baseline gap-2">
+        <h2 className="text-lg font-semibold">{brandViewLabel(brand)}</h2>
+        {!isGroup && (
+          <span className="text-xs text-muted-foreground">
+            {BRANDS[brand].domain} · {BRANDS[brand].entity}
+          </span>
+        )}
+        {isGroup && (
+          <span className="text-xs text-muted-foreground">all businesses, both entities</span>
+        )}
+      </div>
       {/* Hero: SGD 2M progress */}
       <Card>
         <CardContent className="pt-2">
@@ -89,8 +104,17 @@ export default async function CommandCenterPage() {
               </div>
             </div>
             <div>
-              <p className="mb-1 text-xs text-muted-foreground">Won revenue by stream</p>
-              <StreamChart byStream={business.by_stream} />
+              {isGroup ? (
+                <>
+                  <p className="mb-1 text-xs text-muted-foreground">Won revenue by business</p>
+                  <BrandRevenueChart byBrand={business.by_brand} />
+                </>
+              ) : (
+                <>
+                  <p className="mb-1 text-xs text-muted-foreground">Won revenue by stream</p>
+                  <StreamChart byStream={business.by_stream} />
+                </>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -130,7 +154,7 @@ export default async function CommandCenterPage() {
                 )}
               </div>
             </div>
-            <FunnelSummary byStage={pipeline.by_stage} />
+            <FunnelSummary byStage={pipeline.by_stage} brand={brand} />
           </CardContent>
         </Card>
 
@@ -167,7 +191,7 @@ export default async function CommandCenterPage() {
         <Card>
           <CardHeader>
             <PanelTitle
-              title="Website Performance"
+              title="Website — capstoneconsulting.com.sg"
               href="/analytics"
               hint={
                 website.synced_at

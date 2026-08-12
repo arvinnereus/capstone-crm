@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
-export type ContactOption = { id: string; name: string; company: string | null };
+export type ContactOption = { id: string; name: string; company: string | null; brand?: string };
 
 export function ContactCombobox({
   value,
