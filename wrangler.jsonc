@@ -27,7 +27,11 @@
 	],
 	"vars": {
 		"CF_ACCOUNT_ID": "32972c58a867f407bf8232803ab11ef3",
-		"CF_SITE_TAG": "dd36ba7ad6c24c4fba6c2350a3f2cb71"
+		"CF_SITE_TAG": "dd36ba7ad6c24c4fba6c2350a3f2cb71",
+		// Joseph's voice — config, not secrets. Without these the code falls
+		// back to "alloy", which loses the British accent in production.
+		"REALTIME_MODEL": "gpt-realtime",
+		"REALTIME_VOICE": "ballad"
 	},
 	"routes": [
 		{

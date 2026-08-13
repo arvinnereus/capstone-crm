@@ -9,6 +9,7 @@ import {
   Landmark,
   LayoutDashboard,
   Settings,
+  Sparkles,
   SquareKanban,
   Users,
   Wand2,
@@ -34,6 +35,7 @@ const NAV_ITEMS = [
   { title: "Finance", url: "/finance", icon: Landmark },
   { title: "Analytics", url: "/analytics", icon: Globe },
   { title: "Content", url: "/content", icon: Wand2 },
+  { title: "Joseph", url: "/assistant", icon: Sparkles },
 ];
 
 export function AppSidebar({ activeBrand }: { activeBrand: BrandView }) {
