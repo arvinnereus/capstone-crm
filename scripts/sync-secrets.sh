@@ -19,7 +19,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-SYNCABLE=(OPENROUTER_API_KEY OPENAI_API_KEY KIE_API_KEY)
+SYNCABLE=(OPENROUTER_API_KEY OPENAI_API_KEY KIE_API_KEY MCP_TOKEN)
 ENV_FILE=".dev.vars"
 
 if [[ "${1:-}" == "--list" ]]; then
