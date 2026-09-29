@@ -50,13 +50,11 @@ export function RevenueHero({
           {formatSGD(cumulativeCents)}
         </p>
         <div>
-          <div className="relative h-3 w-full overflow-hidden rounded-sm border border-[oklch(0.30_0.06_195)] bg-[oklch(0.14_0.04_200)] dark:bg-[oklch(0.14_0.04_200)]">
+          <div className="relative h-3 w-full overflow-hidden rounded border border-border bg-muted">
             <div
               className="h-full transition-all"
               style={{
                 width: `${pct}%`,
-                background: "linear-gradient(90deg, oklch(0.55 0.19 192), oklch(0.82 0.19 192))",
-                boxShadow: "0 0 12px oklch(0.73 0.19 192 / 0.7), 0 0 4px oklch(0.73 0.19 192)",
               }}
             />
             {milestones.map((m) => (

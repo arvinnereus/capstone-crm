@@ -39,8 +39,8 @@ export default async function CommandCenterPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-baseline gap-2">
-        <h2 className="text-lg font-semibold">{brandViewLabel(brand)}</h2>
+      <div className="flex items-baseline gap-3">
+        <h2 className="text-2xl font-semibold tracking-tight">{brandViewLabel(brand)}</h2>
         {!isGroup && (
           <span className="text-xs text-muted-foreground">
             {BRANDS[brand].domain} · {BRANDS[brand].entity}

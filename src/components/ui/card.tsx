@@ -12,7 +12,7 @@ function Card({
       data-slot="card"
       data-size={size}
       className={cn(
-        "group/card flex flex-col gap-(--card-spacing) overflow-hidden rounded-sm bg-card py-(--card-spacing) text-sm text-card-foreground ring-0 border border-[oklch(0.72_0.06_70)] [box-shadow:inset_0_1px_0_oklch(1_0_0_/_0.45),0_2px_8px_oklch(0.55_0.06_70_/_0.20),0_1px_2px_oklch(0_0_0_/_0.10)] dark:border-[oklch(0.32_0.07_195)] dark:[background:linear-gradient(160deg,oklch(0.14_0.032_200)_0%,oklch(0.11_0.026_200)_100%)] dark:[box-shadow:inset_0_1px_0_oklch(1_0_0_/_0.07),0_0_0_1px_oklch(0.30_0.06_195),0_0_20px_oklch(0.73_0.19_192_/_0.07),0_8px_32px_oklch(0_0_0_/_0.50)] [--card-spacing:--spacing(4)] has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:[--card-spacing:--spacing(3)] data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl",
+        "group/card flex flex-col gap-(--card-spacing) overflow-hidden bg-card py-(--card-spacing) text-sm text-card-foreground ring-0 border border-border [--card-spacing:--spacing(4)] has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:[--card-spacing:--spacing(3)] data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl",
         className
       )}
       {...props}
@@ -25,7 +25,7 @@ function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="card-header"
       className={cn(
-        "group/card-header @container/card-header grid auto-rows-min items-start gap-1 rounded-t-xl px-(--card-spacing) has-data-[slot=card-action]:grid-cols-[1fr_auto] has-data-[slot=card-description]:grid-rows-[auto_auto] [.border-b]:pb-(--card-spacing)",
+        "group/card-header @container/card-header grid auto-rows-min items-start gap-1 px-(--card-spacing) pb-(--card-spacing) has-data-[slot=card-action]:grid-cols-[1fr_auto] has-data-[slot=card-description]:grid-rows-[auto_auto]",
         className
       )}
       {...props}
@@ -38,7 +38,7 @@ function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="card-title"
       className={cn(
-        "font-heading text-base leading-snug font-medium group-data-[size=sm]/card:text-sm dark:text-[oklch(0.73_0.19_192)] dark:uppercase dark:tracking-[0.09em] dark:text-[0.68rem]",
+        "leading-snug font-bold uppercase tracking-[0.10em] text-[0.68rem] text-muted-foreground group-data-[size=sm]/card:text-[0.62rem]",
         className
       )}
       {...props}
